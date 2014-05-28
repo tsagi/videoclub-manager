@@ -29,4 +29,3 @@ void menu(void);
 void gatherfilename(char *filename);
 const char* getfield(char* l, int n);
 void insertprocedure(char *s);
-int getch(char *s, int num[]);
