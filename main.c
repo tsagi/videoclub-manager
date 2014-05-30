@@ -22,7 +22,7 @@ int main(int argc, char *argv[]){
     int select;
     int num[] = {1,2,3,8,9};
     menu();
-    while ( (select = getchar()) != Exit ) {
+    while ( (select = getchar() - '0') != Exit ) {
         printf("%d\n" ,select);
 		switch ( select ) {
 			case NewRental:
