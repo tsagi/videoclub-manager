@@ -24,25 +24,25 @@ int main(int argc, char *argv[]){
     menu();
     while ( (select = getchar() - '0') != Exit ) {
         printf("%d\n" ,select);
-		switch ( select ) {
-			case NewRental:
-				putchar(select);
-				break;
-			case Return:
-				putchar(select);
-				break;
-			case CancelRental:
-				putchar(select);
-				break;
-			case Settings:
-				putchar(select);
-				break;
-			default:
+        switch ( select ) {
+            case NewRental:
+                putchar(select);
+                break;
+            case Return:
+                putchar(select);
+                break;
+            case CancelRental:
+                putchar(select);
+                break;
+            case Settings:
+                putchar(select);
+                break;
+            default:
                 select = 0;
-				continue;
-		}
+                continue;
+        }
         menu();
-	}
+    }
 
     return 0;
 }
@@ -96,13 +96,13 @@ const char* getfield(char* line, int num)
 }
 
 void menu(void) {
-	// menu: displays the main menu of the program
-	puts("\n\n Menu:");
+    // menu: displays the main menu of the program
+    puts("\n\n Menu:");
     puts("  1. Rent a Movie");
     puts("  2. Return a Movie");
     puts("  3. Cancel Rental");
     puts("  8. Settings");
-	puts("  9. Exit\n");
-	printf("Select: ");
+    puts("  9. Exit\n");
+    printf("Select: ");
 }
 
