@@ -8,8 +8,7 @@ WINDOW* logo;
 int h, w;
 
 int main(int argc, char *argv[]){
-    FILE* stream = fopen("data.csv", "r");
-    
+    FILE* stream = fopen("data.csv", "r");    
     char line[1024];
     while (fgets(line, 1024, stream))
     {
@@ -26,6 +25,12 @@ int main(int argc, char *argv[]){
     initscr();
     getmaxyx(stdscr, h, w);
     intro();
+
+    FILE* set = fopen("settings.txt", "r");
+    if (!set){
+        fclose(set);
+        initSettings();
+    }
     menu();
     refresh();
 
@@ -47,7 +52,7 @@ int main(int argc, char *argv[]){
                 setSettings();
                 break;
             default:
-                printw("    Invalid option or exiting");
+                printw("    Invalid option...");
                 refresh();
                 continue;
         }
@@ -124,7 +129,7 @@ void setSettings() {
         }
         fclose(set);          
     }
-    
+    clearScreen();
     move(h-3, 0);
 	switch ( settings ) {
 	case 0:
@@ -142,6 +147,12 @@ void setSettings() {
 		if ( c == '\n' ) break;
 		if ( c == ' ' ) return;
 	}
+    
+    initSettings();    
+}
+
+void initSettings(){
+
     clearScreen();
     move(h-10, 0);
 	printw("Choose your preferable technique for computing the Probe Sequences\n");
@@ -154,7 +165,7 @@ void setSettings() {
 	printw("2. Double Hashing\n");
 	printw("\nSelect: ");
     refresh();
-	c = getch();
+	int c = getch();
 	while ( c != '1' && c != '2' ) c = getch();
 	switch ( c ) {
 	case '1':
@@ -162,7 +173,11 @@ void setSettings() {
 		break;
 	case '2':
 		temp_set = 1;
-	}
+    }
+    FILE* set = fopen("settings.txt", "w");
+    fprintf(set,"%d", temp_set);
+    fclose(set);
+
 }
 
 void menu() {

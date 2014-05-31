@@ -42,3 +42,4 @@ const char* getfield(char* l, int n);
 void insertprocedure(char *s);
 void clearScreen(void);
 void setSettings(void);
+void initSettings(void);
