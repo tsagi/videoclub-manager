@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 #if defined(_WIN32) || defined(_WIN64)
     #define OS_WIN 1
     #include <windows.h>

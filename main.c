@@ -23,6 +23,7 @@ int main(int argc, char *argv[]){
     int select;
     
     initscr();
+    noecho();
     getmaxyx(stdscr, h, w);
     intro();
 
@@ -52,7 +53,11 @@ int main(int argc, char *argv[]){
                 setSettings();
                 break;
             default:
-                printw("    Invalid option...");
+                printw("    Invalid option...");    /****************************************/
+                refresh();                          /* Display that the option is invalid   */ 
+                sleep(1);                           /* for a second. This can be interupted */ 
+                move(h-1, 8);                       /* by any input.                        */
+                clrtoeol();                         /****************************************/
                 refresh();
                 continue;
         }
