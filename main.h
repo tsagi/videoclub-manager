@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #if defined(_WIN32) || defined(_WIN64)
     #define OS_WIN 1
     #include <windows.h>
@@ -9,6 +10,7 @@
     #define OS_WIN 0
     #include <unistd.h>
     #include <ncurses.h>
+    #include <curses.h>
 #endif
 
 // Declarations
@@ -39,3 +41,4 @@ void gatherfilename(char *filename);
 const char* getfield(char* l, int n);
 void insertprocedure(char *s);
 void clearScreen(void);
+void setSettings(void);
