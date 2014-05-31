@@ -1,6 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#if defined(_WIN32) || defined(_WIN64)
+    #define OS_WIN 1
+    #include <windows.h>
+    #include <conio.h>
+#else
+    #define OS_WIN 0
+    #include <unistd.h>
+    #include <ncurses.h>
+#endif
 
 // Declarations
 struct rec {
@@ -29,3 +38,4 @@ void menu(void);
 void gatherfilename(char *filename);
 const char* getfield(char* l, int n);
 void insertprocedure(char *s);
+void clearScreen(void);

@@ -4,11 +4,7 @@ int hashtabsize, settings, temp_set;
 int collisions = 0;
 int entries = 0;
 
-int main(int argc, char *argv[]){   
-    enum {NewRental='1', Return='2', CancelRental='3',
-        Settings='8', Exit='9'};
-    
-    intro();
+int main(int argc, char *argv[]){
     FILE* stream = fopen("data.csv", "r");
     
     char line[1024];
@@ -18,37 +14,41 @@ int main(int argc, char *argv[]){
         // NOTE strtok clobbers tmp
         free(tmp);
     }
+
+    enum {NewRental = 1, Return = 2, CancelRental= 3 ,
+        Settings = 8, Exit=9};
+
+    int select; 
     
-    int select;
-    int num[] = {1,2,3,8,9};
-    menu();
-    while ( (select = getchar() - '0') != Exit ) {
-        printf("%d\n" ,select);
+    do{
+        clearScreen(); 
+        intro();
+        menu();
+        scanf("%d", &select);
         switch ( select ) {
             case NewRental:
-                putchar(select);
+                printf("New Rental");
                 break;
             case Return:
-                putchar(select);
+                printf("Return");
                 break;
             case CancelRental:
-                putchar(select);
+                printf("Cancel Rental");
                 break;
             case Settings:
-                putchar(select);
+                printf("Settings");
                 break;
             default:
-                select = 0;
-                continue;
-        }
-        menu();
-    }
+                printf("Invalid option or exiting");
+                break;
+        }       
+    }while (select != Exit);
 
     return 0;
 }
 
 void intro(){
-    
+    printf("\n\n");
     printf("                     :+""  ~<<::""+:\n");
     printf("                +Xi<<<<!<  `<<!?!<<<HMti%L\n");
     printf("            :?HMMMM:<<<!<~ <<<!X<<<!MM88MMh?x\n");
@@ -77,7 +77,7 @@ void intro(){
     printf("          !?MMMM@88MMR<<<<!<<<  <:<<<MRMMRMMMP!\n");
     printf("            'X*988RMM!<<<?!<<~  <!<<<<MMMMM?'\n");
     printf("                !X*MM<<<<H!<<`  <?<<<<<)!\n");
-    printf("                     '+:uX!<<< .::+''\n\n\n\n\n\n"); 
+    printf("                     '+:uX!<<< .::+''\n\n\n"); 
 
 }
 
@@ -95,14 +95,21 @@ const char* getfield(char* line, int num)
     return NULL;
 }
 
-void menu(void) {
+void menu() {
     // menu: displays the main menu of the program
-    puts("\n\n Menu:");
-    puts("  1. Rent a Movie");
-    puts("  2. Return a Movie");
-    puts("  3. Cancel Rental");
-    puts("  8. Settings");
-    puts("  9. Exit\n");
+    printf("\n\nMenu:\n");
+    printf("  1. Rent a Movie\n");
+    printf("  2. Return a Movie\n");
+    printf("  3. Cancel Rental\n");
+    printf("  8. Settings\n");
+    printf("  9. Exit\n");
     printf("Select: ");
+}
+
+void clearScreen(){
+    if(OS_WIN)
+        system("cls");    /*   DOS   */
+    else
+        system("clear");  /*   UNIX   */
 }
 
