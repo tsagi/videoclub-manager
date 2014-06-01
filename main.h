@@ -26,26 +26,46 @@ struct year {
 
 struct day {
 	int day;
-	int enterprise;
 	double expenses;
-	struct comserv *ptr;
+	struct prod *ptr;
 	struct day *next; };
 
-struct comserv {
+struct prod {
 	char id[5];
-	struct comserv *next; };
+	struct prod *next; };
 
+
+// Functions Prototyping
 void intro(void);
 void initload(void);
+void initSettings(void);
+void gatherInput(char *filename);
 void menu(void);
-void gatherFilename(char *filename);
-const char* getfield(char* l, int n);
-void insertprocedure(char *s);
+void selection1(void);
+void insertProcedure(char *s);
+void selection2(void);
+ int select2(void);
+void deleteProcedure(int key);
+void selection3(void);
+void selection4(void);
+void selection5(void);
+ int collectid(char *id);
+void displaydetails(char *id);
+void month_day(int year, int yearday, int *pmonth, int *pday);
+void selection6(void);
+ int select6_1(void);
+ int select6_2(int select);
+ int collectids6(void);
+void display6(char *filename, int select1);
+void selection7(void);
+ int select7(void);
+void display7(int select, int syear);
+void setSettings(void);
 void clearScreen(void);
-
+int dayOfTheYear(void);
 // .........................................
-int hashinsert(char *key);
-int hashsearch(char *key, int *collisions);
+ int hashinsert(char *key);
+ int hashsearch(char *key, int *collisions);
 unsigned hash(char *key, int i);
 unsigned djb2hash(char *str);
 unsigned sdbmhash(char *str);
@@ -61,32 +81,4 @@ void siftDowninayear(struct rec **htsorted, int root, int bottom, int year);
 double countexpenses(struct rec *strct);
  int cmpexpensesinayear(struct rec *p1, struct rec *p2, int year);
 double countexpensesinayear(struct rec *strct, int year);
-void deleteprocedure(int key);
-void insertprocedure(char *filename);
 
-void setSettings(void);
-void initSettings(void);
-
-void newRental(void);
-void returnRental(void);
-void cancelRental(void);
-void reHash(void);
-
-
-void selection1(void);
-void selection2(void);
- int select2(void);
-void selection3(void);
-void selection4(void);
-void selection5(void);
- int collectid(char *id);
-void displaydetails(char *id);
-void month_day(int year, int yearday, int *pmonth, int *pday);
-void selection6(void);
- int select6_1(void);
- int select6_2(int select);
- int collectids6(void);
-void display6(char *filename, int select1);
-void selection7(void);
- int select7(void);
-void display7(int select, int syear);
