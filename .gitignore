@@ -24,3 +24,6 @@
 
 # Specific Executable
 main
+id_record.txt
+settings.txt
+temp_ids.txt
