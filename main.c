@@ -13,7 +13,7 @@ struct rec deleted; /* For every entry in the hash table that is being removed,
 int h, w;
 
 int main(int argc, char *argv[]){
-    enum {NewFile = '1', DeleteCards = '2', Collisions= '3' ,
+    enum {NewFile = '1', Deleteids = '2', Collisions= '3' ,
         LoadFactor = '4', IdDetails = '5', ManyId = '6',
         TopId = '7', Settings = '8', Exit = '9'};
 
@@ -35,7 +35,7 @@ int main(int argc, char *argv[]){
             case NewFile:
                 selection1();
                 break;
-            case DeleteCards:
+            case Deleteids:
                 selection2();
                 break;
             case Collisions:
@@ -104,12 +104,12 @@ void menu(void) {
 
     printw(" Menu:\n");
     printw("  1. Insert a new file of Purchases\n");
-    printw("  2. Delete cards in the hash table\n");
+    printw("  2. Delete ids in the hash table\n");
     printw("  3. Display the number of collisions\n");
     printw("  4. Display the load factor in the hash table\n");
-    printw("  5. Display the details of a card ID\n");
-    printw("  6. Search for data about a card or a set of cards\n");
-    printw("  7. Display the cards with the highest usage\n");
+    printw("  5. Display the details of a id ID\n");
+    printw("  6. Search for data about a id or a set of ids\n");
+    printw("  7. Display the ids with the highest usage\n");
     printw("  8. Settings\n");
     printw("  9. Exit\n");
     printw("Select: ");
@@ -159,11 +159,11 @@ void selection1(void) {
     move(h-1,0);
     printw("Deleting... ");
     refresh();
-    fp = fopen("id_record.txt", "r");
+    fp = fopen("id_backup.txt", "r");
     while ( !feof(fp) ) {
         fgets(id,26,fp);
         key = hashsearch(id, NULL);
-        if ( key == -1 ) continue;   // If this card has already been deleted, then move on
+        if ( key == -1 ) continue;   // If this id has already been deleted, then move on
         deleteProcedure(key);
     }
     fclose(fp);
@@ -187,7 +187,7 @@ void insertProcedure(char *filename) {
     double expenses;
     struct year *listptr;
     struct day *dtemp;
-    struct prod *ptemp;
+    struct movie *ptemp;
 
     // Build the hash table
     line = s1, data = s2;   // It wouldn't take this definition: char (*line)[200], (*data)[26];
@@ -202,9 +202,9 @@ void insertProcedure(char *filename) {
     } else
         printw("%s was accepted.\nRunning... ", filename);
     refresh();
-    fp2 = fopen("id_record.txt", "w");   // Keep the IDs as a backup, in case the table needs to be deleted
+    fp2 = fopen("id_backup.txt", "w");   // Keep the IDs as a backup, in case the table needs to be deleted
     settings = temp_set;   // Set settings
-    fgets(line, 200, fp);   // Take the first line (Number of different cards IDs)
+    fgets(line, 200, fp);   // Take the first line (Number of different ids IDs)
     numentrfile = atoi(line);
     nextprime( 2 * numentrfile );   // Define the size of the hash table
     ahash = (struct rec **) malloc( ahashsize * sizeof(struct rec *) ); // Allocate space for it
@@ -216,7 +216,7 @@ void insertProcedure(char *filename) {
     while ( !feof(fp) ) {   // While you haven't met the end-of-file, act as follows
         fgets(line, 200, fp);   // Take a line from the file
         i = 0;
-        final = 1;   // It has to do with the final product in the line (Explained later)
+        final = 1;   // It has to do with the final movie in the line (Explained later)
         while ( isspace(*(line + i)) ) i++;   // Ignore any white spaces, and in the first non-
                                               // white space character that will be received, move on
         for ( j = 0; *(line + i) != ';'; i++, j++ )   // Collect ID
@@ -248,7 +248,7 @@ void insertProcedure(char *filename) {
             listptr->ptr = (struct day *) malloc(sizeof(struct day));   // Build a struct day
             listptr->ptr->day = day;   // Set the day
             listptr->ptr->expenses = expenses;   // Set the expenses
-            listptr->ptr->ptr = NULL;   // Initialize pointer to prod
+            listptr->ptr->ptr = NULL;   // Initialize pointer to movie 
             listptr->ptr->next = NULL;
             ahash[key]->ptr = listptr;   // Make listptr's pointed struct the head of the list of years
         } else {   // Otherwise, a list is going to be there, and then...
@@ -257,7 +257,7 @@ void insertProcedure(char *filename) {
                     dtemp = (struct day *) malloc(sizeof(struct day));   // Build a struct day
                     dtemp->day = day;   // Set the day
                     dtemp->expenses = expenses;   // Set the expenses
-                    dtemp->ptr = NULL;   // Initialize pointer to prod
+                    dtemp->ptr = NULL;   // Initialize pointer to movie
                     dtemp->next = listptr->ptr;   // Make dtemp to point to the head of the list of days
                     listptr->ptr = dtemp;   // Make dtemp's pointed struct the new head of the list of days
                     break;
@@ -271,31 +271,31 @@ void insertProcedure(char *filename) {
                 listptr->ptr = (struct day *) malloc(sizeof(struct day));   // Build a struct day
                 listptr->ptr->day = day;   // Set the day
                 listptr->ptr->expenses = expenses;   // Set the expenses
-                listptr->ptr->ptr = NULL;   // Initialize pointer to prod
+                listptr->ptr->ptr = NULL;   // Initialize pointer to movie
                 listptr->ptr->next = NULL;
                 ahash[key]->ptr = listptr;   // Make listptr's pointed struct the new head of the list of years
             }
         }
-        // By now we have created everything but the list of products and services. The pointer for that list is
+        // By now we have created everything but the list of movies. The pointer for that list is
         // listptr->ptr->ptr, and it's going to be used right away
         for ( j = 0; (*(line + i) != '\0' && *(line + i) != '\n') ||
                 (final-- && (*(line + i) = ';') && (*(line + i + 1) = '\n')); i++, j++ ) {
-            /* When last product apears, after the program reads its name, the first expresion is
+            /* When last movie apears, after the program reads its name, the first expresion is
              * going to fail, but the second one will hold the loop for one more iteration.
              * (final-- && *(line + i) = ';' && *(line + i + 1) = '\n'): Here, the first command decrements
              * the variable final and on the second iteration will fail the whole expression, the second one
              * makes sure that control will pass the if statement inside the loop, and the third one will
              * terminate the loop on the second iteration */
-            if ( *(line + i) == ';' ) {   // When you've got the product ID
+            if ( *(line + i) == ';' ) {   // When you've got the movie ID
                 *(data + j) = '\0';   // null-terminate data
-                ptemp = (struct prod *) malloc(sizeof(struct prod));  // Allocate space for a struct prod
+                ptemp = (struct movie *) malloc(sizeof(struct movie));  // Allocate space for a struct movie
                 strcpy(ptemp->id,data);   // Copy data to id
                 ptemp->next = listptr->ptr->ptr;   // Make ptemp to point to the head of the list
                 listptr->ptr->ptr = ptemp;   // Make ptemp's pointed struct the new head of the list
-                j = -1;   // Prepare for the new product or service to come
+                j = -1;   // Prepare for the new movie to come
                 continue;
             }
-            *(data + j) = *(line + i);   // Copy the product/service to data
+            *(data + j) = *(line + i);   // Copy the movie to data
         }
     }
     fclose(fp);
@@ -309,7 +309,7 @@ void insertProcedure(char *filename) {
 }
 
 void selection2(void) {
-    // selection2: gets the name of the file containing the cards for deletion, and then deletes them from the ahash
+    // selection2: gets the name of the file containing the ids for deletion, and then deletes them from the ahash
     FILE *fp;
     int key, count = 0, colls = 0, numdels;
     char filename[30], id[28];
@@ -317,7 +317,7 @@ void selection2(void) {
     if ( !select2() ) return;   // Return to the main menu
     clearScreen();
     move(h-2,0);
-    printw("Type in the name of the file containing the IDs of the cards to delete.");
+    printw("Type in the name of the file containing the IDs of the ids to delete.");
     printw("[Note: Type the name without its file extension]");
     refresh();
     gatherInput(filename);   // Take the filename
@@ -370,8 +370,8 @@ int select2(void) {
     clearScreen();
     move(h-5,0);
     printw("         [Press 1 or 2 for the choices]\n");
-    printw("  2.1. Delete one specific card (Insert the ID from the keyboard)\n");
-    printw("  2.2. Delete a set of cards (Insert the IDs from a file)\n");
+    printw("  2.1. Delete one specific id (Insert the ID from the keyboard)\n");
+    printw("  2.2. Delete a set of ids (Insert the IDs from a file)\n");
     printw("  2.3. Return to the main menu\n");
     printw("Select: ");
     refresh();
@@ -388,9 +388,9 @@ int select2(void) {
     clearScreen();
     move(h-2,0);
     printw("[Note: Press Escape to abort]\n");
-    printw("Insert the card ID to delete");
+    printw("Insert the id ID to delete");
     refresh();
-    if ( collectid(id) != 27 ) {   // Get the card ID, and if Escape hasn't been pressed, continue
+    if ( collectid(id) != 27 ) {   // Get the id ID, and if Escape hasn't been pressed, continue
         key = hashsearch(id, &colls);   // Search for the ID
         if ( key == -1 ) {   // Error checking
             clearScreen();
@@ -418,14 +418,14 @@ void deleteProcedure(int key) {
     // deleteprocedure: deletes every struct related with the entry of the ahash, being in the position key
     struct year *yptr, *p;
     struct day *dptr, *q;
-    struct prod *pptr, *r;
+    struct movie *pptr, *r;
 
     for ( yptr = ahash[key]->ptr; yptr != NULL; yptr = p ) {
         // free the list of years
         for ( dptr = yptr->ptr; dptr != NULL; dptr = q ) {
             // free the list of days of the current year
             for ( pptr = dptr->ptr; pptr != NULL; pptr = r ) {
-                // free the list of products and services of the current day of the current year
+                // free the list of movies of the current day of the current year
                 r = pptr->next;
                 free(pptr);
             }
@@ -468,8 +468,8 @@ void selection5(void) {
     printw("[Note: Press Escape to abort]");
     printw("Insert the ID and the details will appear!");
     refresh();
-    if ( collectid(id) != 27 )   // Get the card ID, and if Escape hasn't been pressed, continue
-        displaydetails(id);   // The card ID has been received. Now display the details
+    if ( collectid(id) != 27 )   // Get the id ID, and if Escape hasn't been pressed, continue
+        displaydetails(id);   // The id ID has been received. Now display the details
     printw("[Press any key to continue] ");
     refresh();
     getch();   // Wait
@@ -505,7 +505,7 @@ int collectid(char *id) {
 }
 
 void displaydetails(char *id) {
-    // displaydetails: displays all the information in memory about the card with the ID id
+    // displaydetails: displays all the information in memory about the id with the ID id
     int i, key, month, day, usage = 0, t_usage;
     double exptotal = 0, t_exp;
     char *end;
@@ -513,7 +513,7 @@ void displaydetails(char *id) {
         "June", "July", "August", "September", "October", "November", "December" };
     struct year *yptr;
     struct day *dptr;
-    struct prod *pptr;
+    struct movie *pptr;
 
     key = hashsearch(id, NULL);
     clearScreen();
@@ -542,7 +542,7 @@ void displaydetails(char *id) {
                 else end = "th";
                 printw("             Date: %s %d%s\n", month_name[month], day, end);
                 printw("         Expenses: %.2f Euro\n", dptr->expenses);
-                printw("Products/Services:");
+                printw("           Movies:");
                 i = 0;
                 while ( pptr != NULL ) {
                     switch ( i ) {
@@ -561,14 +561,14 @@ void displaydetails(char *id) {
                 dptr = dptr->next;
             }
             printw(">>>> In %d, the expenses total was $%.2f\n", yptr->year, t_exp);
-            printw(">>>> and the card was used %d times\n", t_usage);
+            printw(">>>> and the id was used %d times\n", t_usage);
             usage += t_usage;
             exptotal += t_exp;
             yptr = yptr->next;
         }
         printw("====================================\n");
         printw("The total money spent are: $%.2f\n", exptotal);
-        printw("The card has been used %d times\n", usage);
+        printw("The id has been used %d times\n", usage);
         refresh();
     }
 }
@@ -588,7 +588,7 @@ void month_day(int year, int yearday, int *pmonth, int *pday) {
 
 void selection6(void) {
     // selection6: takes the choice of the menu about what data the user wants to be displayed
-    // and also gives the choice to either enter at the moment the card IDs or insert them from a file
+    // and also gives the choice to either enter at the moment the id IDs or insert them from a file
     int select1, select2;
     char filename[30];
 
@@ -599,7 +599,7 @@ void selection6(void) {
     if ( select2 == '3' ) {
         return; }   // Return to the main menu
     if ( select2 == '1' ) {   // If insertion from the keyboard was selected
-        if ( !collectids6() ) {   // Collect the card IDs...
+        if ( !collectids6() ) {   // Collect the id IDs...
             printw("\n[Press any key to continue] ");
             refresh();
             getch();   // Wait
@@ -610,7 +610,7 @@ void selection6(void) {
         printw("[Note: Type the name without its file extension]\n");
         refresh();
         gatherInput(filename);   // Take the name of the file...
-        display6(filename, select1);   // ... and display the data about the card IDs in the file
+        display6(filename, select1);   // ... and display the data about the id IDs in the file
     }
 }
 
@@ -621,10 +621,10 @@ int select6_1(void){
     clearScreen();
     move(h-7,0);
     printw("         [Press 1 through 5 for the choices]\n");
-    printw("  6.1. Display the set of products and services purchased\n");
+    printw("  6.1. Display the set of movies purchased\n");
     printw("  6.2. Display the expenses total\n");
     printw("  6.3. Display the complete movement\n");
-    printw("  6.4. Display the most desirable product or service\n");
+    printw("  6.4. Display the most desirable movie\n");
     printw("  6.5. Return to the main menu");
     printw("Select: ");
     refresh();
@@ -651,8 +651,8 @@ int select6_2(int select1) {
     clearScreen();
     move(h-5,0);
     printw("         [Press 1 or 2 for the choices]\n");
-    printw("  6.%c.1. Insert the card IDs from the keyboard\n", select1);
-    printw("  6.%c.2. Insert the card IDs from a file\n", select1);
+    printw("  6.%c.1. Insert the id IDs from the keyboard\n", select1);
+    printw("  6.%c.2. Insert the id IDs from a file\n", select1);
     printw("  6.%c.3. Return to the main menu\n\n", select1);
     printw("Select: ");
     refresh();
@@ -667,7 +667,7 @@ int select6_2(int select1) {
 }
 
 int collectids6(void) {
-    // collectids6: collects card ids from the input and stores them in a file
+    // collectids6: collects id ids from the input and stores them in a file
     int c, i = 0, count = 0;
     char id[26];
     FILE *fp;
@@ -694,7 +694,7 @@ int collectids6(void) {
             id[i++] = c;
             id[i] = '\n';
             i = 0;   // Rewind
-            count++;   // Increment the number of cards to be deleted
+            count++;   // Increment the number of ids to be deleted
             fwrite(id, sizeof(char), 26, fp);   // Write down the id
             clearScreen();
             move(h-2,0);
@@ -731,7 +731,7 @@ void display6(char *filename, int select) {
         "June", "July", "August", "September", "October", "November", "December" };
     struct year *yptr;
     struct day *dptr;
-    struct prod *pptr;
+    struct movie *pptr;
 
     fp = fopen(filename, "r");
     clearScreen();
@@ -758,7 +758,7 @@ void display6(char *filename, int select) {
                 move(h-11,0);
                 printw("               ID: %s\n", ahash[key]->id);
                 printw("============================================\n");
-                printw("Products/Services:\n");
+                printw("           Movies:\n");
                 yptr = ahash[key]->ptr;
                 i = 0;
                 while ( yptr != NULL ) {
@@ -827,7 +827,7 @@ void display6(char *filename, int select) {
                         else end = "th";
                         printw("             Date: %s %d%s\n", month_name[month], day, end);
                         printw("         Expenses: $%.2f\n", dptr->expenses);
-                        printw("Products/Services:");
+                        printw("           Movies:");
                         i = 0;
                         while ( pptr != NULL ) {
                             switch ( i ) {
@@ -846,14 +846,14 @@ void display6(char *filename, int select) {
                         dptr = dptr->next;
                     }
                     printw("\n>>>> In %d, the expenses total was $%.2f\n", yptr->year, t_exp);
-                    printw(">>>> and the card was used %d times\n", t_usage);
+                    printw(">>>> and the id was used %d times\n", t_usage);
                     usage += t_usage;
                     exptotal += t_exp;
                     yptr = yptr->next;
                 }
                 printw("====================================\n");
                 printw("The total money spent are: $%.2f\n", exptotal);
-                printw("The card has been used %d times.\n", usage);
+                printw("The id has been used %d times.\n", usage);
                 refresh();
                 break;
             case '4':
@@ -877,14 +877,12 @@ void display6(char *filename, int select) {
                     yptr = yptr->next;
                 }
                 max = pns[0];
-                // In case several products or services have the same number of purchases, then the p. or s. that
-                // is going to be considered as the most desirable is the one with the smallest consecutive number
                 for ( i = 0; i < 1000; i++ ){
                         if ( pns[i] > max ) {
                             max = pns[i];
                             posi = i;
                         }
-                printw("        ProductID: %s%d\n", posi < 100 ? (posi < 10 ? "00": "0"): "",posi);
+                printw("        movieID: %s%d\n", posi < 100 ? (posi < 10 ? "00": "0"): "",posi);
                 printw("        Purchased: %d times\n", max);
                 if ( max > allmax ) {
                     allmax = max;
@@ -902,17 +900,17 @@ void display6(char *filename, int select) {
             clearScreen();
             move(h-3,0);
             printw("===================================================\n");
-            printw("All the cardholders together have spent: $%.2f\n", exptotal);
+            printw("All the members together have spent: $%.2f\n", exptotal);
             break;
         case '4':
             clearScreen();
             move(h-8,0);
             printw("_____________________________________________________________\n");
             printw("=============================================================\n");
-            printw("The most desirable product/service among all the cardholders:\n");
+            printw("The most desirable movie among all the members:\n");
             printw("============================================\n");
             printw("               ID: %s\n", maxid);
-            printw("Product/ServiceID: %c%s%d\n",allposi?'S':'P',(allposj<100)?(allposj<10)?"00":"0":"",allposj);
+            printw("movieID: %s%d\n",(allposi<100)?(allposi<10)?"00":"0":"",allposi);
             printw("        Purchased: %d times\n", allmax);
     }
     printw("[Press any key to continue] ");
@@ -942,9 +940,9 @@ int select7(void) {
     // select7: takes the choice of the menu from the user
     int c;
     clearScreen();
-    move(h-1,0);
+    move(h-6,0);
     printw("         [Press 1 through 4 for the choices]\n");
-    printw("  7.1. Display those with the most products/services purchased\n");
+    printw("  7.1. Display those with the most movies purchased\n");
     printw("  7.2. Display those with the biggest expenses in general\n");
     printw("  7.3. Display those with the biggest expenses in a year\n");
     printw("  7.4. Return to the main menu\n");
@@ -965,21 +963,21 @@ int select7(void) {
 }
 
 void display7(int select, int year) {
-    // display7: displays data of the best buyers
+    // display7: displays data of the best members
     int num, i, j;
     double expenses;
     char snum[10];
     struct year *yptr;
     struct day *dptr;
-    struct prod *pptr;
+    struct movie *pptr;
     clearScreen();
     move(h-3,0);
-    printw("Insert the number of cards");
+    printw("Insert the number of ids");
     printw("you would like to be displayed (from 1 to %d)\n", numentrfile);
     printw(" Type here [Press Enter when you are done]: ");
-    scanw("%d", &num);   // Take the number of the cards to be displayed
+    scanw("%d", &snum);   // Take the number of the ids to be displayed
     refresh();
-    while ( num < 1 || num > numentrfile ) {   // Range checking
+    while ( atoi(snum) < 1 || num > numentrfile ) {   // Range checking
         move(h-1,0);
         printw(" Out of range. Please try again: ");
         refresh();
@@ -991,28 +989,27 @@ void display7(int select, int year) {
     move(h-11,0);
     switch ( select ) {   // Entitle the procedure
         case '1':
-            printw("Best Buyers regarding their Possessions\n");
+            printw("Best members regarding their Rentals\n");
             printw("=======================================\n");
             break;
         case '2':
-            printw("Best Buyers regarding their Expenses\n");
+            printw("Best members regarding their Expenses\n");
             printw("====================================\n");
             break;
         case '3':
-            printw("\n\nBest Buyers regarding their Expenses in Year %d\n", year);
+            printw("Best members regarding their Expenses in Year %d\n", year);
             printw("=================================================\n");
             break;
     }
     refresh();
-    move(h-9,0);
     switch ( select ) {
         case '1':
-            heapSort(htsorted, numentrfile, cmpproducts);   // Sort the IDs according to their products/services
+            heapSort(htsorted, numentrfile, cmpmovies);   // Sort the IDs according to their movies
             for ( i = numentrfile - 1; i > numentrfile - 1 - num; i-- ) {
                 printw("               ID: %s\n", htsorted[i]->id);
                 printw("============================================\n");
-                printw("            Count: %d\n",countproducts(htsorted[i]));
-                printw("Products/Services:");
+                printw("            Count: %d\n",countmovies(htsorted[i]));
+                printw("           Movies:");
                 yptr = htsorted[i]->ptr;
                 j = 0;
                 while ( yptr != NULL ) {
@@ -1035,7 +1032,6 @@ void display7(int select, int year) {
                     yptr = yptr->next;
                 }
             }
-            printw("\n");
             refresh();
             break;
         case '2':
@@ -1078,7 +1074,7 @@ void display7(int select, int year) {
                 printw("   Expenses Total: $%.2f", expenses);
             }
     }
-    printw("\n[Press any key to continue] ");
+    printw("[Press any key to continue] ");
     refresh();
     getch();   // Wait
     return;
@@ -1168,8 +1164,8 @@ int hashsearch(char *id, int *colls) {
 
     while ( i < ahashsize ) {   // While the cells haven't all been checked
         if ( ahash[j = hash(id,i)] == NULL )
-            return -1;   // The card with this id does not exist
-        // If there hasn't been a deletion at the cell, there will be a card there. Compare the two ids
+            return -1;   // The id with this id does not exist
+        // If there hasn't been a deletion at the cell, there will be a id there. Compare the two ids
         else if ( ahash[j] != &deleted && strcmp(ahash[j]->id, id) == 0 )
             return j;   // Return position on the hash table
         if ( colls != NULL ) *colls++;
@@ -1303,21 +1299,21 @@ void siftDowninayear(struct rec **htsorted, int root, int bottom, int year) {
     }
 }
 
-int cmpproducts(struct rec *rec1, struct rec *rec2) {
-    // cmpproducts: compares the amount of products purchased by two cardholders
+int cmpmovies(struct rec *rec1, struct rec *rec2) {
+    // cmpmovies: compares the amount of movies purchased by two members
     // returns: +1, 0, -1 for rec1>rec2, rec1==rec2, rec1<rec2, respectively
     int count1, count2;
 
-    count1 = countproducts(rec1);
-    count2 = countproducts(rec2);
+    count1 = countmovies(rec1);
+    count2 = countmovies(rec2);
     return count1 <= count2 ? ( count1 < count2 ? -1 : 0 ) : 1;
 }
 
-int countproducts(struct rec *strct) {
-    // countproducts: counts the products rented with the ID strct->id
+int countmovies(struct rec *strct) {
+     // countmovies: counts the movies rented with the ID strct->id
     struct year *yptr;
     struct day *dptr;
-    struct prod *pptr;
+    struct movie *pptr;
     int count = 0;
 
     yptr = strct->ptr;
@@ -1337,7 +1333,7 @@ int countproducts(struct rec *strct) {
 }
 
 int cmpexpenses(struct rec *rec1, struct rec *rec2) {
-    // cmpexpenses: compares the expenses of two cardholders
+    // cmpexpenses: compares the expenses of two members
     // returns: +1, 0, -1 for rec1>rec2, rec1==rec2, rec1<rec2, respectively
     double count1, count2;
 
@@ -1347,7 +1343,7 @@ int cmpexpenses(struct rec *rec1, struct rec *rec2) {
 }
 
 double countexpenses(struct rec *strct) {
-    // countexpenses: counts the expenses made with the card with the ID strct->id
+    // countexpenses: counts the expenses made with the id with the ID strct->id
     struct year *yptr;
     struct day *dptr;
     double exp = 0;

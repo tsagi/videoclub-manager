@@ -27,12 +27,12 @@ struct year {
 struct day {
 	int day;
 	double expenses;
-	struct prod *ptr;
+	struct movie *ptr;
 	struct day *next; };
 
-struct prod {
+struct movie {
 	char id[5];
-	struct prod *next; };
+	struct movie *next; };
 
 
 // Functions Prototyping
@@ -63,20 +63,18 @@ void display7(int select, int syear);
 void setSettings(void);
 void clearScreen(void);
 int dayOfTheYear(void);
-// .........................................
  int hashinsert(char *key);
  int hashsearch(char *key, int *collisions);
 unsigned hash(char *key, int i);
 unsigned djb2hash(char *str);
 unsigned sdbmhash(char *str);
 void nextprime(int p);
-// .........................................
 void heapSort(struct rec **htsorted, int array_size, int (*comp)(struct rec *, struct rec *));
 void siftDown(struct rec **htsorted, int root, int bottom, int (*comp)(struct rec *, struct rec *));
 void heapSortinayear(struct rec **htsorted, int array_size, int year);
 void siftDowninayear(struct rec **htsorted, int root, int bottom, int year);
- int cmpproducts(struct rec *p1, struct rec *p2);
- int countproducts(struct rec *strct);
+ int cmpmovies(struct rec *p1, struct rec *p2);
+ int countmovies(struct rec *strct);
  int cmpexpenses(struct rec *p1, struct rec *p2);
 double countexpenses(struct rec *strct);
  int cmpexpensesinayear(struct rec *p1, struct rec *p2, int year);
