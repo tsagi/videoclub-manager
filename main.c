@@ -107,7 +107,7 @@ void menu(void) {
   printw("  2. Delete ids in the hash table\n");
   printw("  3. Display the number of collisions\n");
   printw("  4. Display the load factor in the hash table\n");
-  printw("  5. Display the details of a id ID\n");
+  printw("  5. Display the details of a member\n");
   printw("  6. Search for data about a id or a set of ids\n");
   printw("  7. Display the ids with the highest usage\n");
   printw("  8. Settings\n");
@@ -1523,9 +1523,8 @@ void gatherInput(char *filename) {
 void initSettings(){
 
   clearScreen();
-  move(h-10, 0);
+  move(h-6, 0);
   printw("Choose your preferable technique for computing the Probe Sequences\n");
-  printw("[Note: Changes are not going to affect the current table]\n");
   printw("[Press 1 or 2 for the choices]\n\n");
   printw("1. Linear Probing\n");
   printw("2. Double Hashing\n\n");
