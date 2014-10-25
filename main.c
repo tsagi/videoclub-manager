@@ -7,15 +7,15 @@ int numentrfile;
 
 struct rec **ahash, **htsorted;
 struct rec deleted; /* For every entry in the hash table that is being removed,
-                     * its pointer is going to point to deleted */
+* its pointer is going to point to deleted */
 
 // ncurses
 int h, w;
 
 int main(int argc, char *argv[]){
   enum {NewFile = '1', Deleteids = '2', Collisions= '3' ,
-    LoadFactor = '4', IdDetails = '5', ManyId = '6',
-    TopId = '7', Settings = '8', Exit = '9'};
+  LoadFactor = '4', IdDetails = '5', ManyId = '6',
+  TopId = '7', Settings = '8', Exit = '9'};
 
   int select;
   deleted.ptr = NULL;
@@ -33,37 +33,37 @@ int main(int argc, char *argv[]){
   while ((select = getch()) != Exit) {
     switch ( select ) {
       case NewFile:
-        selection1();
-        break;
+      selection1();
+      break;
       case Deleteids:
-        selection2();
-        break;
+      selection2();
+      break;
       case Collisions:
-        selection3();
-        break;
+      selection3();
+      break;
       case LoadFactor:
-        selection4();
-        break;
+      selection4();
+      break;
       case IdDetails:
-        selection5();
-        break;
+      selection5();
+      break;
       case ManyId:
-        selection6();
-        break;
+      selection6();
+      break;
       case TopId:
-        selection7();
-        break;
+      selection7();
+      break;
       case Settings:
-        setSettings();
-        break;
+      setSettings();
+      break;
       default:
-        printw("    Invalid option..."); /****************************/
-        refresh();                       /* Display that the option  */
-        sleep(1);                        /* is invalid for a second. */
-        move(h-1, 8);                    /* This can be interupted   */
-        clrtoeol();                      /*by any input.             */
-        refresh();                       /****************************/
-        continue;
+      printw("    Invalid option..."); /****************************/
+      refresh();                       /* Display that the option  */
+      sleep(1);                        /* is invalid for a second. */
+      move(h-1, 8);                    /* This can be interupted   */
+      clrtoeol();                      /*by any input.             */
+      refresh();                       /****************************/
+      continue;
     }
     menu();
     refresh();
@@ -130,7 +130,9 @@ void selection1(void) {
     cert = toupper(getch());
     refresh();
   }
-  while ( cert != 'Y' && cert != 'N' );
+  while ( cert != 'Y' && cert != 'N' ){
+
+  }
   if ( cert == 'N' ) {
     clearScreen();
     move(h-1,0);
@@ -164,7 +166,9 @@ void selection1(void) {
   while ( !feof(fp) ) {
     fgets(id,26,fp);
     key = hashsearch(id, NULL);
-    if ( key == -1 ) continue;   // If this id has already been deleted, then move on
+    if ( key == -1 ) {
+      continue; // If this id has already been deleted, then move on
+    }
     deleteProcedure(key);
   }
   fclose(fp);
@@ -222,26 +226,33 @@ void insertProcedure(char *filename) {
     fgets(line, 200, fp);   // Take a line from the file
     i = 0;
     final = 1;   // It has to do with the final movie in the line (Explained later)
-    while ( isspace(*(line + i)) ) i++;   // Ignore any white spaces, and in the first non-
-    // white space character that will be received, move on
-    for ( j = 0; *(line + i) != ';'; i++, j++ )   // Collect ID
+    while ( isspace(*(line + i)) ){
+      i++;   // Ignore any white spaces, and in the first non-
+      // white space character that will be received, move on
+    }
+
+    for ( j = 0; *(line + i) != ';'; i++, j++ ) {   // Collect ID
       *(data + j) = *(line + i);                // Copy the ID to data
+    }
     *(data + j) = '\0';   // null-terminate data
     key = hashinsert(data);   // Insert the ID and get the key to the table
     fprintf(fp2,data);   // Write down the ID to the backup file
     i++;   // Ignore the ';'
-    for ( j = 0; *(line + i) != ';'; i++, j++ )   // Collect the day of the year
+    for ( j = 0; *(line + i) != ';'; i++, j++ ) { // Collect the day of the year
       *(data + j) = *(line + i);   // Copy the day to data
+    }
     *(data + j) = '\0';   // null-terminate data
     day = atoi(data);   // Hold the day
     i++;   // Ignore the ';'
-    for ( j = 0; *(line + i) != ';'; i++, j++ )   // Collect the year
+    for ( j = 0; *(line + i) != ';'; i++, j++ ) {  // Collect the year
       *(data + j) = *(line + i);   // Copy the year to data
+    }
     *(data + j) = '\0';   // null-terminate data
     year = atoi(data);   // Hold the year
     i++;   // Ignore the ';'
-    for ( j = 0; *(line + i) != ';'; i++, j++ )   // Collect the expenses
+    for ( j = 0; *(line + i) != ';'; i++, j++ ) {  // Collect the expenses
       *(data + j) = *(line + i);   // Copy the expenses to data
+    }
     *(data + j) = '\0';   // null-terminate data
     expenses = atof(data);   // Hold the expenses
     i++;   // Ignore the ';'
@@ -271,9 +282,13 @@ void insertProcedure(char *filename) {
           listptr->ptr = dtemp;   // Make dtemp's pointed struct the new head of the list of days
           break;
         }
-        else listptr = listptr->next;   // ... and if they don't match, check the next element of the list
+        else {
+          listptr = listptr->next;   // ... and if they don't match, check the next element of the list
+        }
       }
-      while ( listptr != NULL );
+      while ( listptr != NULL ){
+
+      }
 
       // At the end, if the year wasn't in the list, add it
       if ( listptr == NULL ) {
@@ -290,14 +305,13 @@ void insertProcedure(char *filename) {
     }
     // By now we have created everything but the list of movies. The pointer for that list is
     // listptr->ptr->ptr, and it's going to be used right away
-    for ( j = 0; (*(line + i) != '\0' && *(line + i) != '\n') ||
-        (final-- && (*(line + i) = ';') && (*(line + i + 1) = '\n')); i++, j++ ) {
+    for ( j = 0; (*(line + i) != '\0' && *(line + i) != '\n') || (final-- && (*(line + i) = ';') && (*(line + i + 1) = '\n')); i++, j++ ) {
       /* When last movie apears, after the program reads its name, the first expresion is
-       * going to fail, but the second one will hold the loop for one more iteration.
-       * (final-- && *(line + i) = ';' && *(line + i + 1) = '\n'): Here, the first command decrements
-       * the variable final and on the second iteration will fail the whole expression, the second one
-       * makes sure that control will pass the if statement inside the loop, and the third one will
-       * terminate the loop on the second iteration */
+      * going to fail, but the second one will hold the loop for one more iteration.
+      * (final-- && *(line + i) = ';' && *(line + i + 1) = '\n'): Here, the first command decrements
+      * the variable final and on the second iteration will fail the whole expression, the second one
+      * makes sure that control will pass the if statement inside the loop, and the third one will
+      * terminate the loop on the second iteration */
       // When you've got the movie ID
       if ( *(line + i) == ';' ) {
         *(data + j) = '\0';   // null-terminate data
@@ -328,7 +342,9 @@ void selection2(void) {
   int key, count = 0, colls = 0, numdels;
   char filename[30], id[28];
 
-  if ( !select2() ) return;   // Return to the main menu
+  if ( !select2() ) {
+    return;   // Return to the main menu
+  }
   clearScreen();
   move(h-2,0);
   printw("Type in the name of the file containing the IDs of the ids to delete.");
@@ -395,9 +411,15 @@ int select2(void) {
     c = getch();
     if ( c != '1' && c != '2' && c != '3' ) continue;
     putchar(c);
-    if ( c == '3' ) return 0;   // Return to the main menu
-    else if ( c == '2' ) return 1;
-    else break;
+    if ( c == '3' ) {
+      return 0;   // Return to the main menu
+    }
+    else if ( c == '2' ) {
+      return 1;
+    }
+    else {
+      break;
+    }
   }
   clearScreen();
   move(h-2,0);
@@ -484,8 +506,9 @@ void selection5(void) {
   printw("[Note: Press Escape to abort]");
   printw("Insert the ID and the details will appear!");
   refresh();
-  if ( collectid(id) != 27 )   // Get the id ID, and if Escape hasn't been pressed, continue
+  if ( collectid(id) != 27 ) {  // Get the id ID, and if Escape hasn't been pressed, continue
     displaydetails(id);   // The id ID has been received. Now display the details
+  }
   printw("[Press any key to continue] ");
   refresh();
   getch();   // Wait
@@ -500,15 +523,21 @@ int collectid(char *id) {
   printw(" Type here: ");
   refresh();
   while ( (c = getch()) ) {
-    if ( c == 27 ) return c;  // If Escape was pressed, return
-    if ( isspace(c) ) continue;   // Ignore any white spaces
+    if ( c == 27 ) {
+      return c;  // If Escape was pressed, return
+    }
+    if ( isspace(c) ) {
+      continue;   // Ignore any white spaces
+    }
     // If backspace is pressed, cancel and start over
     if ( c == '\b' ) {
       printw("   X\nType again: ");
       i = 0;
       continue;
     }
-    if ( i < 24 ) id[i++] = c;
+    if ( i < 24 ) {
+      id[i++] = c;
+    }
     // When the id has been almost entered
     else {
       id[i++] = c;
@@ -527,7 +556,7 @@ void displaydetails(char *id) {
   double exptotal = 0, t_exp;
   char *end;
   static char *month_name[] = { "Illegal month", "January", "February", "March", "April", "May",
-    "June", "July", "August", "September", "October", "November", "December" };
+  "June", "July", "August", "September", "October", "November", "December" };
   struct year *yptr;
   struct day *dptr;
   struct movie *pptr;
@@ -553,10 +582,18 @@ void displaydetails(char *id) {
       while ( dptr != NULL ) {
         pptr = dptr->ptr;
         month_day(yptr->year, dptr->day, &month, &day);
-        if ( day == 1 ) end = "st";
-        else if ( day == 2 ) end = "nd";
-        else if ( day == 3 ) end = "rd";
-        else end = "th";
+        if ( day == 1 ) {
+          end = "st";
+        }
+        else if ( day == 2 ) {
+          end = "nd";
+        }
+        else if ( day == 3 ) {
+          end = "rd";
+        }
+        else {
+          end = "th";
+        }
         printw("             Date: %s %d%s\n", month_name[month], day, end);
         printw("         Expenses: %.2f Euro\n", dptr->expenses);
         printw("           Movies:");
@@ -564,10 +601,12 @@ void displaydetails(char *id) {
         while ( pptr != NULL ) {
           switch ( i ) {
             case 0:
-              i++;
-              break;
+            i++;
+            break;
             default:
-              if ( i++ % 10 == 0 ) printw("\n\t\t  ");
+            if ( i++ % 10 == 0 ) {
+              printw("\n\t\t  ");
+            }
           }
           printw(" %s", pptr->id);
           pptr = pptr->next;
@@ -594,11 +633,12 @@ void month_day(int year, int yearday, int *pmonth, int *pday) {
   // month_day: takes the day of the year and returns the month and the day of the month
   int i, leap;
   static char daytab[2][13] = { {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},   // Non-leap years
-    {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31} };   // Leap years
+  {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31} };   // Leap years
 
   int r= ( ( leap = year%4 ) == 0 ) && ( ( year%100 != 0) || (year%400 == 0) );
-  for (i = 1; yearday > daytab[leap][i]; i++)
+  for (i = 1; yearday > daytab[leap][i]; i++) {
     yearday -= daytab[leap][i];
+  }
   *pmonth = i;
   *pday = yearday;
 }
@@ -610,9 +650,13 @@ void selection6(void) {
   char filename[30];
 
   select1 = select6_1();   // Take the first choice
-  if ( select1 == '5' ) return;    // Return to the main menu
+  if ( select1 == '5' ) {
+    return;    // Return to the main menu
+  }
   select2 = select6_2(select1);   // Take the second choice
-  if ( select2 == '3' ) return;   // Return to the main menu
+  if ( select2 == '3' ) {
+    return;   // Return to the main menu
+  }
   // If insertion from the keyboard was selected
   if ( select2 == '1' ) {
     // Collect the id IDs...
@@ -654,9 +698,9 @@ int select6_1(void){
       case '3':
       case '4':
       case '5':
-        break;
+      break;
       default:
-        continue;
+      continue;
     }
     putchar(c);
     return c;
@@ -677,9 +721,13 @@ int select6_2(int select1) {
 
   while( 1 ) {
     c = getch();
-    if ( c != '1' && c != '2' && c != '3' ) continue;   // Error Checking
+    if ( c != '1' && c != '2' && c != '3' ) {
+      continue;   // Error Checking
+    }
     putchar(c);
-    if ( c == '2' ) printw("\n");
+    if ( c == '2' ) {
+      printw("\n");
+    }
     return c;
   }
 }
@@ -698,7 +746,9 @@ int collectids6(void) {
   printw("Type here: ");
   refresh();
   while ( (c = getch()) != '\n' ) {
-    if ( c == ' ' || c == '\t' ) continue;   // Ignore any spaces or tabs
+    if ( c == ' ' || c == '\t' ) {
+      continue;   // Ignore any spaces or tabs
+    }
     if ( c == '\b' ) {   // If backspace is pressed, cancel and start over
       clearScreen();
       move(h-1,0);
@@ -725,8 +775,12 @@ int collectids6(void) {
   }
   clearScreen();
   move(h-1,0);
-  if ( i != 0 ) printw("  Failed!\n");
-  else printw(" -\n");
+  if ( i != 0 ) {
+    printw("  Failed!\n");
+  }
+  else {
+    printw(" -\n");
+  }
   refresh();
   clearScreen();
   move(h-2,0);
@@ -749,7 +803,7 @@ void display6(char *filename, int select) {
   double exptotal = 0, t_exp;
   char id[28], *end, *maxid;
   static char *month_name[] = { "Illegal month", "January", "February", "March", "April", "May",
-    "June", "July", "August", "September", "October", "November", "December" };
+  "June", "July", "August", "September", "October", "November", "December" };
   struct year *yptr;
   struct day *dptr;
   struct movie *pptr;
@@ -778,126 +832,142 @@ void display6(char *filename, int select) {
     }
     switch ( select ) {
       case '1':
-        clearScreen();
-        move(0,0);
-        printw("               ID: %s\n", ahash[key]->id);
-        printw("============================================\n");
-        printw("           Movies:\n");
-        yptr = ahash[key]->ptr;
-        i = 0;
-        while ( yptr != NULL ) {
-          dptr = yptr->ptr;
-          while ( dptr != NULL ) {
-            pptr = dptr->ptr;
-            while ( pptr != NULL ) {
-              switch ( i ) {
-                case 0:
-                  i++;
-                  break;
-                default:
-                  if ( i++ % 10 == 0 ) printw("\n\t\t  ");
+      clearScreen();
+      move(0,0);
+      printw("               ID: %s\n", ahash[key]->id);
+      printw("============================================\n");
+      printw("           Movies:\n");
+      yptr = ahash[key]->ptr;
+      i = 0;
+      while ( yptr != NULL ) {
+        dptr = yptr->ptr;
+        while ( dptr != NULL ) {
+          pptr = dptr->ptr;
+          while ( pptr != NULL ) {
+            switch ( i ) {
+              case 0:
+              i++;
+              break;
+              default:
+              if ( i++ % 10 == 0 ) {
+                printw("\n\t\t  ");
               }
-              printw(" %s\n", pptr->id);
-              pptr = pptr->next;
             }
-            dptr = dptr->next;
-          }
-          yptr = yptr->next;
-        }
-        refresh();
-        break;
-      case '2':
-        clearScreen();
-        move(0,0);
-        printw("               ID: %s\n", ahash[key]->id);
-        printw("============================================\n");
-        yptr = ahash[key]->ptr;
-        t_usage = 0;
-        t_exp = 0;
-        while ( yptr != NULL ) {
-          dptr = yptr->ptr;
-          while ( dptr != NULL ) {
-            t_usage++;
-            t_exp += dptr->expenses;
-            dptr = dptr->next;
-          }
-          yptr = yptr->next;
-        }
-        exptotal += t_exp;
-        printw("   Expenses Total: $%.2f\n", t_exp);
-        printw("       Times Used: %d", t_usage);
-        refresh();
-        break;
-      case '3':
-        clearScreen();
-        move(0,0);
-        printw("               ID: %s\n", ahash[key]->id);
-        printw("============================================\n");
-        yptr = ahash[key]->ptr;
-        usage = 0;
-        exptotal = 0;
-        while ( yptr != NULL ) {
-          dptr = yptr->ptr;
-          t_usage = 0;
-          t_exp = 0;
-          printw("             Year: %d\n", yptr->year);
-          printw("=======================\n");
-          while ( dptr != NULL ) {
-            pptr = dptr->ptr;
-            month_day(yptr->year, dptr->day, &month, &day);
-            if ( day == 1 ) end = "st";
-            else if ( day == 2 ) end = "nd";
-            else if ( day == 3 ) end = "rd";
-            else end = "th";
-            printw("             Date: %s %d%s\n", month_name[month], day, end);
-            printw("         Expenses: $%.2f\n", dptr->expenses);
-            printw("           Movies:");
-            i = 0;
-            while ( pptr != NULL ) {
-              switch ( i ) {
-                case 0:
-                  i++;
-                  break;
-                default:
-                  if ( i++ % 10 == 0 ) printw("\n\t\t  ");
-              }
-              printw(" %s", pptr->id);
-              pptr = pptr->next;
-            }
-            refresh();
-            t_usage++;
-            t_exp += dptr->expenses;
-            dptr = dptr->next;
-          }
-          printw("\n>>>> In %d, the expenses total was $%.2f\n", yptr->year, t_exp);
-          printw(">>>> and the id was used %d times\n", t_usage);
-          usage += t_usage;
-          exptotal += t_exp;
-          yptr = yptr->next;
-        }
-        printw("====================================\n");
-        printw("The total money spent are: $%.2f\n", exptotal);
-        printw("The id has been used %d times.\n", usage);
-        refresh();
-        break;
-      case '4':
-        clearScreen();
-        move(0,0);
-        printw("               ID: %s\n", ahash[key]->id);
-        printw("============================================\n");
-        for ( i = 0; i < 100; i++ ) pns[i] = 0;
-        yptr = ahash[key]->ptr;
-        while ( yptr != NULL ) {
-          dptr = yptr->ptr;
-          while ( dptr != NULL ) {
-            pptr = dptr->ptr;
-            while ( pptr != NULL ) pns[atoi(pptr->id + 1)]++;
+            printw(" %s\n", pptr->id);
             pptr = pptr->next;
           }
           dptr = dptr->next;
         }
         yptr = yptr->next;
-        refresh();
+      }
+      refresh();
+      break;
+      case '2':
+      clearScreen();
+      move(0,0);
+      printw("               ID: %s\n", ahash[key]->id);
+      printw("============================================\n");
+      yptr = ahash[key]->ptr;
+      t_usage = 0;
+      t_exp = 0;
+      while ( yptr != NULL ) {
+        dptr = yptr->ptr;
+        while ( dptr != NULL ) {
+          t_usage++;
+          t_exp += dptr->expenses;
+          dptr = dptr->next;
+        }
+        yptr = yptr->next;
+      }
+      exptotal += t_exp;
+      printw("   Expenses Total: $%.2f\n", t_exp);
+      printw("       Times Used: %d", t_usage);
+      refresh();
+      break;
+      case '3':
+      clearScreen();
+      move(0,0);
+      printw("               ID: %s\n", ahash[key]->id);
+      printw("============================================\n");
+      yptr = ahash[key]->ptr;
+      usage = 0;
+      exptotal = 0;
+      while ( yptr != NULL ) {
+        dptr = yptr->ptr;
+        t_usage = 0;
+        t_exp = 0;
+        printw("             Year: %d\n", yptr->year);
+        printw("=======================\n");
+        while ( dptr != NULL ) {
+          pptr = dptr->ptr;
+          month_day(yptr->year, dptr->day, &month, &day);
+          if ( day == 1 ) {
+            end = "st";
+          }
+          else if ( day == 2 ) {
+            end = "nd";
+          }
+          else if ( day == 3 ) {
+            end = "rd";
+          }
+          else {
+            end = "th";
+          }
+          printw("             Date: %s %d%s\n", month_name[month], day, end);
+          printw("         Expenses: $%.2f\n", dptr->expenses);
+          printw("           Movies:");
+          i = 0;
+          while ( pptr != NULL ) {
+            switch ( i ) {
+              case 0:
+              i++;
+              break;
+              default:
+              if ( i++ % 10 == 0 ) {
+                printw("\n\t\t  ");
+              }
+            }
+            printw(" %s", pptr->id);
+            pptr = pptr->next;
+          }
+          refresh();
+          t_usage++;
+          t_exp += dptr->expenses;
+          dptr = dptr->next;
+        }
+        printw("\n>>>> In %d, the expenses total was $%.2f\n", yptr->year, t_exp);
+        printw(">>>> and the id was used %d times\n", t_usage);
+        usage += t_usage;
+        exptotal += t_exp;
+        yptr = yptr->next;
+      }
+      printw("====================================\n");
+      printw("The total money spent are: $%.2f\n", exptotal);
+      printw("The id has been used %d times.\n", usage);
+      refresh();
+      break;
+      case '4':
+      clearScreen();
+      move(0,0);
+      printw("               ID: %s\n", ahash[key]->id);
+      printw("============================================\n");
+      for ( i = 0; i < 100; i++ ) {
+        pns[i] = 0;
+      }
+      yptr = ahash[key]->ptr;
+      while ( yptr != NULL ) {
+        dptr = yptr->ptr;
+        while ( dptr != NULL ) {
+          pptr = dptr->ptr;
+          while ( pptr != NULL ) {
+            pns[atoi(pptr->id + 1)]++;
+          }
+          pptr = pptr->next;
+        }
+        dptr = dptr->next;
+      }
+      yptr = yptr->next;
+      refresh();
     }
     max = pns[0];
     for ( i = 0; i < 1000; i++ ) {
@@ -918,20 +988,20 @@ void display6(char *filename, int select) {
   fclose(fp);
   switch ( select ) {
     case '2':
-      clearScreen();
-      move(h-3,0);
-      printw("===================================================\n");
-      printw("All the members together have spent: $%.2f\n", exptotal);
-      break;
+    clearScreen();
+    move(h-3,0);
+    printw("===================================================\n");
+    printw("All the members together have spent: $%.2f\n", exptotal);
+    break;
     case '4':
-      clearScreen();
-      move(h-8,0);
-      printw("_____________________________________________________________\n");
-      printw("=============================================================\n");
-      printw("The most desirable movie among all the members:\n");
-      printw("============================================\n");
-      printw("               ID: %s\n", maxid);
-      break;
+    clearScreen();
+    move(h-8,0);
+    printw("_____________________________________________________________\n");
+    printw("=============================================================\n");
+    printw("The most desirable movie among all the members:\n");
+    printw("============================================\n");
+    printw("               ID: %s\n", maxid);
+    break;
   }
   printw("[Press any key to continue] ");
   refresh();
@@ -944,7 +1014,9 @@ void selection7(void) {
   char syear[5];
 
   select = select7();   // Get the choice of the user
-  if ( select == '4' ) return;   // Return to the main menu
+  if ( select == '4' ) {
+    return;   // Return to the main menu
+  }
   if ( select == '3' ) {
     clearScreen();
     move(h-1,0);
@@ -974,9 +1046,9 @@ int select7(void) {
       case '2':
       case '3':
       case '4':
-        break;
+      break;
       default:
-        continue;
+      continue;
     }
     return c;
   }
@@ -1009,92 +1081,92 @@ void display7(int select, int year) {
   move(0,0);
   switch ( select ) {   // Entitle the procedure
     case '1':
-      printw("Best %d members regarding their Rentals\n", num);
-      printw("=======================================\n");
-      break;
+    printw("Best %d members regarding their Rentals\n", num);
+    printw("=======================================\n");
+    break;
     case '2':
-      printw("Best members regarding their Expenses\n");
-      printw("====================================\n");
-      break;
+    printw("Best members regarding their Expenses\n");
+    printw("====================================\n");
+    break;
     case '3':
-      printw("Best members regarding their Expenses in Year %d\n", year);
-      printw("=================================================\n");
-      break;
+    printw("Best members regarding their Expenses in Year %d\n", year);
+    printw("=================================================\n");
+    break;
   }
   refresh();
   switch ( select ) {
     case '1':
-      heapSort(htsorted, numentrfile, cmpmovies);   // Sort the IDs according to their movies
-      for ( i = entries - 2; i > entries - 2 - num; i-- ) {
-        printw("               ID: %s\n", htsorted[i]->id);
-        printw("============================================\n");
-        printw("            Count: %d\n",countmovies(htsorted[i]));
-        printw("           Movies:\n");
-        yptr = htsorted[i]->ptr;
-        j = 0;
-        while ( yptr != NULL ) {
-          dptr = yptr->ptr;
-          while ( dptr != NULL ) {
-            pptr = dptr->ptr;
-            while ( pptr != NULL ) {
-              switch ( j ) {
-                case 0:
-                  j++;
-                  break;
-                default:
-                  if ( j++ % 10 == 0 ) printw("\n\t\t  ");
-              }
-              printw(" %s\n", pptr->id);
-              pptr = pptr->next;
+    heapSort(htsorted, numentrfile, cmpmovies);   // Sort the IDs according to their movies
+    for ( i = entries - 2; i > entries - 2 - num; i-- ) {
+      printw("               ID: %s\n", htsorted[i]->id);
+      printw("============================================\n");
+      printw("            Count: %d\n",countmovies(htsorted[i]));
+      printw("           Movies:\n");
+      yptr = htsorted[i]->ptr;
+      j = 0;
+      while ( yptr != NULL ) {
+        dptr = yptr->ptr;
+        while ( dptr != NULL ) {
+          pptr = dptr->ptr;
+          while ( pptr != NULL ) {
+            switch ( j ) {
+              case 0:
+              j++;
+              break;
+              default:
+              if ( j++ % 10 == 0 ) printw("\n\t\t  ");
             }
-            dptr = dptr->next;
+            printw(" %s\n", pptr->id);
+            pptr = pptr->next;
           }
-          yptr = yptr->next;
+          dptr = dptr->next;
         }
+        yptr = yptr->next;
       }
-      refresh();
-      break;
+    }
+    refresh();
+    break;
     case '2':
-      heapSort(htsorted, numentrfile, cmpexpenses);   // Sort the IDs according to their expenses
-      for ( i = entries - 2; i > entries - 2 - num; i-- ) {
-        printw("               ID: %s\n", htsorted[i]->id);
-        printw("============================================\n");
-        yptr = htsorted[i]->ptr;
-        expenses = 0;
-        while ( yptr != NULL ) {
-          dptr = yptr->ptr;
-          while ( dptr != NULL ) {
-            expenses += dptr->expenses;
-            dptr = dptr->next;
-          }
-          yptr = yptr->next;
+    heapSort(htsorted, numentrfile, cmpexpenses);   // Sort the IDs according to their expenses
+    for ( i = entries - 2; i > entries - 2 - num; i-- ) {
+      printw("               ID: %s\n", htsorted[i]->id);
+      printw("============================================\n");
+      yptr = htsorted[i]->ptr;
+      expenses = 0;
+      while ( yptr != NULL ) {
+        dptr = yptr->ptr;
+        while ( dptr != NULL ) {
+          expenses += dptr->expenses;
+          dptr = dptr->next;
         }
-        printw("   Expenses Total: $%.2f", expenses);
+        yptr = yptr->next;
       }
-      refresh();
-      break;
+      printw("   Expenses Total: $%.2f", expenses);
+    }
+    refresh();
+    break;
     case '3':
-      // Sort the IDs according to their expenses in the year specified
-      heapSortinayear(htsorted, numentrfile, year);
-      for ( i = entries - 2; i > entries - 2 - num; i-- ) {
-        printw("               ID: %s\n", htsorted[i]->id);
-        printw("============================================\n");
-        yptr = htsorted[i]->ptr;
-        expenses = 0;
-        while ( yptr != NULL ) {
-          if ( yptr->year != year ) {
-            yptr = yptr->next;
-            continue;
-          }
-          dptr = yptr->ptr;
-          while ( dptr != NULL ) {
-            expenses += dptr->expenses;
-            dptr = dptr->next;
-          }
-          break;
+    // Sort the IDs according to their expenses in the year specified
+    heapSortinayear(htsorted, numentrfile, year);
+    for ( i = entries - 2; i > entries - 2 - num; i-- ) {
+      printw("               ID: %s\n", htsorted[i]->id);
+      printw("============================================\n");
+      yptr = htsorted[i]->ptr;
+      expenses = 0;
+      while ( yptr != NULL ) {
+        if ( yptr->year != year ) {
+          yptr = yptr->next;
+          continue;
         }
-        printw("   Expenses Total: $%.2f", expenses);
+        dptr = yptr->ptr;
+        while ( dptr != NULL ) {
+          expenses += dptr->expenses;
+          dptr = dptr->next;
+        }
+        break;
       }
+      printw("   Expenses Total: $%.2f", expenses);
+    }
   }
   printw("[Press any key to continue] ");
   refresh();
@@ -1110,18 +1182,22 @@ void setsettings(void) {
   move(h-3,0);
   switch ( settings ) {
     case 0:
-      printw("The current technique for computing the Probe Sequences is \"Linear Probing\"\n");
-      break;
+    printw("The current technique for computing the Probe Sequences is \"Linear Probing\"\n");
+    break;
     case 1:
-      printw("The current technique for computing the Probe Sequences is \"Double Hashing\"\n");
+    printw("The current technique for computing the Probe Sequences is \"Double Hashing\"\n");
   }
   printw("===========================================================================\n");
   printw("[Press Enter to change the setting, or Space to return to the main menu] ");
   refresh();
   while ( 1 ) {
     c= getch();
-    if ( c == '\n' ) break;
-    if ( c == ' ' ) return;
+    if ( c == '\n' ) {
+      break;
+    }
+    if ( c == ' ' ) {
+      return;
+    }
   }
 
   clearScreen();
@@ -1138,13 +1214,15 @@ void setsettings(void) {
   printw("Select: ");
   refresh();
   c = getch();
-  while ( c != '1' && c != '2' ) c = getch();
+  while ( c != '1' && c != '2' ) {
+    c = getch();
+  }
   switch ( c ) {
     case '1':
-      temp_set = 0;
-      break;
+    temp_set = 0;
+    break;
     case '2':
-      temp_set = 1;
+    temp_set = 1;
   }
 }
 
@@ -1161,7 +1239,8 @@ int hashinsert(char *id) {
       if ( ahash[j] == NULL ) {   // Error checking
         printw("Memory was not allocated. Insertion failed!\n");
         refresh();
-        return -1; }
+        return -1;
+      }
       // Every element in the htsorted table is going to point to the exact structs ahash does
       htsorted[entries] = ahash[j];
       entries++;
@@ -1170,7 +1249,9 @@ int hashinsert(char *id) {
       return j;   // Return position on the hash table
     }
     // If the ids match
-    else if ( strcmp(ahash[j]->id,id) == 0 ) return j;   // Return position on the hash table
+    else if ( strcmp(ahash[j]->id,id) == 0 ) {
+      return j;   // Return position on the hash table
+    }
     else {
       collisions++;
       i++;
@@ -1188,14 +1269,18 @@ int hashsearch(char *id, int *colls) {
 
   // While the cells haven't all been checked
   while ( i < ahashsize ) {
-    if ( ahash[j = hash(id,i)] == NULL )
+    if ( ahash[j = hash(id,i)] == NULL ) {
       return -1;   // The id with this id does not exist
+    }
     // If there hasn't been a deletion at the cell, there will be a id there. Compare the two ids
-    else if ( ahash[j] != &deleted && strcmp(ahash[j]->id, id) == 0 )
+    else if ( ahash[j] != &deleted && strcmp(ahash[j]->id, id) == 0 ) {
       return j;   // Return position on the hash table
-    if ( colls != NULL ) *colls++;
+    }
+    if ( colls != NULL ) {
+      *colls++;
+    }
     /* In case you are searching for an ID to delete, note the collisions that will happen,
-     * so they can be removed from the total amount of collisions in the hash table later */
+    * so they can be removed from the total amount of collisions in the hash table later */
     i++;
   }
   return -1;
@@ -1204,8 +1289,12 @@ int hashsearch(char *id, int *colls) {
 unsigned hash(char *id, int i) {
   // hashing: implements the fragmentation
   // returns: a position in the hash table
-  if ( settings ) return ( djb2hash(id) + i * sdbmhash(id) ) % ahashsize;   // In case of double hashing
-  else return ( djb2hash(id) + i ) % ahashsize;   // In case of linear probing
+  if ( settings ) {
+    return ( djb2hash(id) + i * sdbmhash(id) ) % ahashsize;   // In case of double hashing
+  }
+  else {
+    return ( djb2hash(id) + i ) % ahashsize;   // In case of linear probing
+  }
 }
 
 unsigned djb2hash(char *str) {
@@ -1214,7 +1303,9 @@ unsigned djb2hash(char *str) {
   unsigned long long hash = 5381;
   int c;
 
-  while ( (c = *str++) ) hash = ( (hash << 5) + hash ) + c;
+  while ( (c = *str++) ){
+    hash = ( (hash << 5) + hash ) + c;
+  }
   return hash % ahashsize;
 }
 
@@ -1224,7 +1315,9 @@ unsigned sdbmhash(char *str) {
   unsigned long long hash = 0;
   int c;
 
-  while ( (c = *str++) ) hash = c + (hash << 6) + (hash << 16) - hash;
+  while ( (c = *str++) ) {
+    hash = c + (hash << 6) + (hash << 16) - hash;
+  }
   return (hash % (ahashsize - 1)) + 1;
 }
 
@@ -1233,9 +1326,14 @@ void nextprime(int p) {
   int d;
 
   for ( ; ; p++ ) {
-    for ( d = 2; d < p; d++ )
-      if ( p % d == 0 ) break;
-    if ( d == p ) break;
+    for ( d = 2; d < p; d++ ){
+      if ( p % d == 0 ) {
+        break;
+      }
+    }
+    if ( d == p ) {
+      break;
+    }
   }
   ahashsize = p;
 }
@@ -1325,8 +1423,9 @@ void siftDowninayear(struct rec **htsorted, int root, int bottom, int year) {
       htsorted[root] = htsorted[maxChild];
       htsorted[maxChild] = temp;
       root = maxChild;
-    } else
+    } else {
       done = 1;
+    }
   }
 }
 
@@ -1480,11 +1579,11 @@ void setSettings() {
   move(h-3, 0);
   switch ( settings ) {
     case 0:
-      printw("The current technique for computing the Probe Sequences is \"Linear Probing\"\n");
-      break;
+    printw("The current technique for computing the Probe Sequences is \"Linear Probing\"\n");
+    break;
     case 1:
-      printw("The current technique for computing the Probe Sequences is \"Double Hashing\"\n");
-      break;
+    printw("The current technique for computing the Probe Sequences is \"Double Hashing\"\n");
+    break;
   }
   printw("===========================================================================\n");
   printw("[Press Enter to change the setting, or Space to return to the main menu] ");
@@ -1511,9 +1610,11 @@ void gatherInput(char *filename) {
       printw(" Type again: ");
       refresh();
     }
-    if ( isspace(c) ) continue;   // Ignore any spaces or tabs
+    if ( isspace(c) ) {
+      continue;   // Ignore any spaces or tabs
+    }
     /* There is no need for any further error checking. Mistakes in the filenames
-     * will be recognized by a later use of fopen as failures to open the files. */
+    * will be recognized by a later use of fopen as failures to open the files. */
     filename[i++] = c;   // Write down the character
     printw("%c", c);
     refresh();
@@ -1531,13 +1632,15 @@ void initSettings(){
   printw("Select: ");
   refresh();
   int c = getch();
-  while ( c != '1' && c != '2' ) c = getch();
+  while ( c != '1' && c != '2' ) {
+    c = getch();
+  }
   switch ( c ) {
     case '1':
-      temp_set = 0;
-      break;
+    temp_set = 0;
+    break;
     case '2':
-      temp_set = 1;
+    temp_set = 1;
   }
   FILE* set = fopen("settings.txt", "w");
   fprintf(set,"%d", temp_set);
