@@ -25,5 +25,6 @@
 # Specific Executable
 main
 id_record.txt
+id_backup.txt
 settings.txt
 temp_ids.txt
