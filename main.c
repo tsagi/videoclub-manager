@@ -130,9 +130,7 @@ void selection1(void) {
     cert = toupper(getch());
     refresh();
   }
-  while ( cert != 'Y' && cert != 'N' ){
-
-  }
+  while ( cert != 'Y' && cert != 'N' );
   if ( cert == 'N' ) {
     clearScreen();
     move(h-1,0);
@@ -286,9 +284,7 @@ void insertProcedure(char *filename) {
           listptr = listptr->next;   // ... and if they don't match, check the next element of the list
         }
       }
-      while ( listptr != NULL ){
-
-      }
+      while ( listptr != NULL );
 
       // At the end, if the year wasn't in the list, add it
       if ( listptr == NULL ) {
